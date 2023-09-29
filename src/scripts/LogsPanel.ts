@@ -47,7 +47,7 @@ export class LogsPanel
 
         this._optionsPanel = _optionsPanel;
         this.wrapper = wrapper;
-        this._optionsPanel.miscGroup.getButton('logs').div.classList.remove('toggled');
+        this._optionsPanel.turnOnLogs();
         this.toggle();
 
         this.log('Welcome to Scooby!', MessageColor.BLUE);
@@ -125,7 +125,7 @@ export class LogsPanel
      */
     public toggle(): void
     {
-        if (this._optionsPanel.miscGroup.getButton('logs').contains('toggled'))
+        if (this._optionsPanel.isLogsOn())
         {
             this.wrapper.style.display = 'none';
             this.div.style.display = 'block';

@@ -1,4 +1,5 @@
 import { TextureData } from './TextureMonitor';
+import { cloneCanvas, imageBitmapToCanvas } from './utils/canvasUtils';
 import { getByteSize } from './utils/textures/calculateFileSize';
 
 export class TextureCard
@@ -29,7 +30,7 @@ export class TextureCard
         this.div.classList.add('texture-wrapper');
         this.info.classList.add('texture-info');
         this.extra.classList.add('extra-info');
-        data.source?.classList?.add('texture');
+        // data.source?.classList?.add('texture');
 
         this.dimension.innerHTML = `<span>&#127924;</span>&nbsp;&nbsp;${data.width} X ${data.height}`;
         this.size.innerHTML = `<span>&#128190;</span>&nbsp;&nbsp;${mbSize}`;
@@ -39,10 +40,10 @@ export class TextureCard
         // Setup hidden texture card hover content
         this.extra.appendChild(this.name);
 
-        const sourceURL = data.source.src;
-
-        if (sourceURL)
+        if (data.source.src)
         {
+            const sourceURL = data.source.src;
+
             this.name.innerText = sourceURL.substring(
                 sourceURL.lastIndexOf('/') + 1,
                 sourceURL.indexOf('?') !== -1 ? sourceURL.indexOf('?') : sourceURL.length,
@@ -54,9 +55,34 @@ export class TextureCard
             textureButton.onclick = function ()
             {
                 // WIP - Need to find a way to open locally on file explorer
+                // I doesn't always work, as the sourceURL might not be the actual file path
                 window.open(sourceURL, '_blank');
             };
             this.extra.appendChild(textureButton);
+            data.cardHolder.classList.add('type-texture');
+
+            const image = new Image();
+
+            image.classList.add('texture');
+            image.src = sourceURL;
+            this.div.appendChild(image);
+        }
+        else if (data.source instanceof ImageBitmap)
+        {
+            const canvas = imageBitmapToCanvas(data.source);
+
+            canvas.classList.add('texture');
+            this.div.appendChild(canvas);
+            this.name.innerText = 'ImageBitmap';
+            data.cardHolder.classList.add('type-texture');
+        }
+        else if (data.source instanceof HTMLCanvasElement)
+        {
+            const canvas = cloneCanvas(data.source);
+
+            canvas.classList.add('texture');
+            this.div.appendChild(canvas);
+            this.name.innerText = 'Canvas';
             data.cardHolder.classList.add('type-texture');
         }
         else
@@ -65,7 +91,7 @@ export class TextureCard
             data.cardHolder.classList.add('type-misc');
         }
 
-        data.source.classList && this.div.appendChild(data.source);
+        // data.source.classList && this.div.appendChild(data.source);
         data.cardHolder.appendChild(this.div);
         this.info.appendChild(this.dimension);
         this.info.appendChild(this.size);

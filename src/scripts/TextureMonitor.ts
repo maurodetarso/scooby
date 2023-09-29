@@ -1,7 +1,7 @@
 import { LogsPanel, MessageColor } from './LogsPanel';
 import { TextureCard } from './TextureCard';
 import { OptionsPanel } from './toggles/OptionsPanel';
-import { ToggleAction, ToggleButton } from './toggles/ToggleButton';
+import { ToggleAction } from './toggles/ToggleButton';
 import { attachToDocument } from './utils/document/attachToDocument';
 import { convertToResizeContainer, ResizeableContainer } from './utils/resizeContainer';
 import { convertToScrollContainer } from './utils/scrollContainer';
@@ -98,7 +98,7 @@ export class TextureMonitor
         )
         {
             sessionStorage.setItem(TextureMonitor.CIB_KEY, 'true');
-            this._optionsPanel.miscGroup.getButton('bitmap').div.classList.remove('toggled');
+            this._optionsPanel.turnOnKillBitmap();
         }
 
         this._initialized = true;
@@ -166,7 +166,7 @@ export class TextureMonitor
      * @param typeMap - a map of GLenum to byte size
      * @param glTexture - key for texture card data
      */
-    public texImage2d(args: IArguments,
+    public texImage2D(args: IArguments,
         formatMap:Record<GLenum, number>,
         typeMap:Record<GLenum, number>,
         glTexture: WebGLTexture,
@@ -318,8 +318,8 @@ export class TextureMonitor
      */
     private _updateList(): void
     {
-        const deleted = this._optionsPanel.statusGroup.getButton('deleted').contains('toggled');
-        const active = this._optionsPanel.statusGroup.getButton('active').contains('toggled');
+        const deleted = this._optionsPanel.isDeletedTexturesOn();
+        const active = this._optionsPanel.isActiveTexturesOn();
         let entities = document.querySelectorAll('.texture-entity');
 
         entities.forEach((entity: Element) =>
@@ -342,9 +342,9 @@ export class TextureMonitor
 
         entities.forEach((entity: Element) =>
         {
-            const cb = (button: ToggleButton, entity:Element, type:string) =>
+            const cb = (isOn: boolean, entity:Element, type:string) =>
             {
-                if (button.contains('toggled'))
+                if (isOn)
                 {
                     if (entity.classList.contains(type))
                     {
@@ -353,8 +353,8 @@ export class TextureMonitor
                 }
             };
 
-            cb(this._optionsPanel.typeGroup.getButton('texture'), entity, 'type-texture');
-            cb(this._optionsPanel.typeGroup.getButton('misc'), entity, 'type-misc');
+            cb(this._optionsPanel.isRegularTexturesOn(), entity, 'type-texture');
+            cb(this._optionsPanel.isOtherTexturesOn(), entity, 'type-misc');
         });
     }
 }

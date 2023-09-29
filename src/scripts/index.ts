@@ -129,7 +129,7 @@ HTMLCanvasElement.prototype.getContext = function ()
         {
             const glTexture = gl.getParameter(getTextureMap[arguments[0]]);
 
-            textureMonitor.texImage2d(arguments, formatMap, typeMap, glTexture);
+            textureMonitor.texImage2D(arguments, formatMap, typeMap, glTexture);
             RenderingContext.texImage2D.apply(this, arguments);
         };
     }
