@@ -311,6 +311,19 @@ export class TextureMonitor
         });
 
         this._toAdd.length = 0;
+        this._reorderCards();
+    }
+
+    private _reorderCards(): void
+    {
+        const dataList = Array.from(this._textureMap.values());
+
+        dataList.sort((a, b) => b.size - a.size);
+
+        for (const data of dataList)
+        {
+            this._cardWrapper.appendChild(data.cardHolder);
+        }
     }
 
     /**
@@ -356,5 +369,7 @@ export class TextureMonitor
             cb(this._optionsPanel.isRegularTexturesOn(), entity, 'type-texture');
             cb(this._optionsPanel.isOtherTexturesOn(), entity, 'type-misc');
         });
+
+        this._reorderCards();
     }
 }
